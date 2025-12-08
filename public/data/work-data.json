@@ -1,0 +1,28 @@
+{
+  "workData": [
+    {
+      "image": "/images/work/work-img-1.jpg",
+      "title": "Wood Processing System Mobile",
+      "client": "PT. Ratimdo Utama",
+      "slug": "mug-sticker-designing"
+    },
+    {
+      "image": "/images/work/work-img-2.jpg",
+      "title": "Plastic Production System Mobile",
+      "client": "PT. Ganda Saribu Utama",
+      "slug": "mobile-app-design"
+    },
+    {
+      "image": "/images/work/work-img-3.jpg",
+      "title": "Fashion Website Template",
+      "client": "John Honnai",
+      "slug": "fashion-website-template"
+    },
+    {
+      "image": "/images/work/work-img-4.jpg",
+      "title": "Book Cover Design",
+      "client": "John Honnai",
+      "slug": "book-cover-design"
+    }
+  ]
+}
