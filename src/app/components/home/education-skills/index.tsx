@@ -1,11 +1,29 @@
 "use client";
 
+import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { getImgPath } from "@/utils/image";
 
-const skills = [
+/* =======================
+   TYPES
+======================= */
+interface SkillGroup {
+  category: string;
+  icon: string;
+  items: string[];
+}
+
+interface FlipCardProps {
+  group: SkillGroup;
+  index: number;
+}
+
+/* =======================
+   DATA
+======================= */
+const skills: SkillGroup[] = [
   {
     category: "Mobile Development",
     icon: "/images/icon/flutter.svg",
@@ -28,43 +46,53 @@ const skills = [
   },
 ];
 
-// Animation
-const fadeUp = {
-  hidden: { opacity: 10, y: 30 },
-  show: (i = 0) => ({
+/* =======================
+   ANIMATION - ✅ FIXED
+======================= */
+const fadeUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.6,
-      delay: i * 0.12,
-      ease: "easeOut",
-    },
-  }),
+      ease: [0.16, 1, 0.3, 1],
+    } as any,
+  },
 };
 
-function FlipCard({ group, index }) {
+/* =======================
+   FLIP CARD
+======================= */
+function FlipCard({ group, index }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
     <motion.div
       variants={fadeUp}
-      custom={index}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
+      transition={{ 
+        delay: index * 0.12 // ✅ Pindahkan delay ke sini
+      } as any}
       className="relative h-72 cursor-pointer"
       style={{ perspective: "1000px" }}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <motion.div
         className="relative w-full h-full"
-        style={{
-          transformStyle: "preserve-3d",
-        }}
+        style={{ transformStyle: "preserve-3d" }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
+        transition={{
+          duration: 0.6,
+          ease: [0.645, 0.045, 0.355, 1],
+        }}
       >
-        {/* FRONT SIDE - Judul Besar */}
+        {/* FRONT */}
         <div
           className="absolute inset-0 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition-shadow overflow-hidden"
           style={{
@@ -72,7 +100,6 @@ function FlipCard({ group, index }) {
             WebkitBackfaceVisibility: "hidden",
           }}
         >
-          {/* Watermark Icon */}
           <div className="absolute -right-4 -bottom-4 opacity-[0.15] pointer-events-none">
             <Image
               src={getImgPath(group.icon)}
@@ -82,15 +109,8 @@ function FlipCard({ group, index }) {
             />
           </div>
 
-          {/* Content */}
           <div className="relative z-10 h-full flex flex-col items-center justify-center p-8">
-            <div
-              className="w-16 h-16 mb-6 rounded-2xl 
-              bg-white/50 backdrop-blur-md 
-              border border-white/40 
-              shadow-sm 
-              flex items-center justify-center"
-            >
+            <div className="w-16 h-16 mb-6 rounded-2xl bg-white/50 backdrop-blur-md border border-white/40 shadow-sm flex items-center justify-center">
               <Image
                 src={getImgPath(group.icon)}
                 alt={group.category}
@@ -107,7 +127,7 @@ function FlipCard({ group, index }) {
           </div>
         </div>
 
-        {/* BACK SIDE - Tech Stack List */}
+        {/* BACK */}
         <div
           className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl shadow-xl overflow-hidden"
           style={{
@@ -116,7 +136,6 @@ function FlipCard({ group, index }) {
             transform: "rotateY(180deg)",
           }}
         >
-          {/* Watermark Icon */}
           <div className="absolute -right-4 -bottom-4 opacity-[0.08] pointer-events-none">
             <Image
               src={getImgPath(group.icon)}
@@ -126,13 +145,12 @@ function FlipCard({ group, index }) {
             />
           </div>
 
-          {/* Content */}
           <div className="relative z-10 h-full flex flex-col items-start justify-center p-8">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-white mb-1">
                 {group.category}
               </h3>
-              <div className="w-12 h-0.5 bg-white/30"></div>
+              <div className="w-12 h-0.5 bg-white/30" />
             </div>
 
             <ul className="space-y-4 w-full">
@@ -164,28 +182,23 @@ function FlipCard({ group, index }) {
   );
 }
 
+/* =======================
+   SECTION
+======================= */
 export default function SkillsSection() {
   return (
     <section className="relative bg-white py-28 overflow-hidden">
-      {/* Soft background tone */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
-        {/* HEADER */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20"
-        >
+        {/* HEADER - ✅ Hapus motion.div */}
+        <div className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20">
           <h2 className="text-3xl font-bold tracking-tight text-black">
             Skills
           </h2>
           <p className="text-lg font-mono text-gray-500">(03)</p>
-        </motion.div>
+        </div>
 
-        {/* SKILLS GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto">
           {skills.map((group, index) => (
             <FlipCard key={index} group={group} index={index} />
