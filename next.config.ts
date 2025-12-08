@@ -10,9 +10,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // eslint: { ignoreDuringBuilds: true },  <-- HAPUS/COMMENT
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
   },

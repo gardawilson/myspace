@@ -20,10 +20,17 @@ export function generateStaticParams() {
   }));
 }
 
-// Gunakan Page type dari Next.js
-export default function SkillDetailPage({ params }: { params: { slug: string } }) {
+// PERBAIKAN: Ubah params menjadi Promise dan tambahkan async
+export default async function SkillDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  // Await params terlebih dahulu
+  const { slug } = await params;
+  
   // Temukan skill berdasarkan slug
-  const skill = skills.find(s => slugify(s.name) === params.slug);
+  const skill = skills.find(s => slugify(s.name) === slug);
 
   if (!skill) {
     return (
