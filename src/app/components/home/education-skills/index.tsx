@@ -37,12 +37,17 @@ const fadeUp = {
     transition: {
       duration: 0.6,
       delay: i * 0.12,
-      ease: "easeOut",
     },
   }),
 };
 
-function FlipCard({ group, index }) {
+interface SkillGroup {
+  category: string;
+  icon: string;
+  items: string[];
+}
+
+function FlipCard({ group, index }: { group: SkillGroup; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
