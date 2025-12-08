@@ -33,15 +33,14 @@ const fadeUp: Variants = {
     opacity: 0,
     y: 40,
   },
-  show: (i: number = 0) => ({
+  show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.7,
-      delay: i * 0.15,
       ease: [0.16, 1, 0.3, 1],
-    } as any, // ✅ FIX UTAMA ERROR TS
-  }),
+    } as any,
+  },
 };
 
 /* ===========================
@@ -76,9 +75,12 @@ const TimelineCard = ({ exp, index }: TimelineCardProps) => {
       variants={fadeUp}
       initial="hidden"
       animate={controls}
-      custom={index}
       whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 140 } as any}
+      transition={{ 
+        type: "spring", 
+        stiffness: 140,
+        delay: index * 0.15 
+      } as any}
       className="relative bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-2xl shadow-sm hover:shadow-xl transition-all"
     >
       {/* Dot */}
@@ -109,7 +111,7 @@ const ExperienceTimeline = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
-        {/* HEADER */}
+        {/* HEADER - ✅ DIPERBAIKI: Hapus motion.div yang error */}
         <div className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20">
           <h2 className="text-3xl font-bold tracking-tight text-black">
             Experience

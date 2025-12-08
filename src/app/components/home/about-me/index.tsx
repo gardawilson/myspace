@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const stats = [
   { count: "03", label: "Years of Experience" },
@@ -8,18 +8,17 @@ const stats = [
   { count: "25+", label: "Happy Clients" },
 ];
 
-// Reusable animation
-const fadeUp = {
+// ✅ FIXED: Ubah ease string jadi array atau gunakan 'as any'
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 26 },
-  show: (i = 0) => ({
+  show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.55,
-      delay: i * 0.12,
-      ease: "easeOut",
-    },
-  }),
+      ease: [0.16, 1, 0.3, 1], // ✅ Cubic-bezier array (easeOut)
+    } as any,
+  },
 };
 
 export default function AboutMe() {
@@ -31,19 +30,13 @@ export default function AboutMe() {
 
       <div className="relative z-10 container mx-auto">
 
-        {/* HEADER */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-16"
-        >
+        {/* HEADER - ✅ Hapus motion.div yang bermasalah */}
+        <div className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-16">
           <h2 className="text-3xl font-bold tracking-tight text-black">
             About Me
           </h2>
           <p className="text-lg font-mono text-gray-500">(01)</p>
-        </motion.div>
+        </div>
 
         {/* MAIN CONTENT */}
         <div className="max-w-4xl space-y-16">
@@ -78,12 +71,15 @@ export default function AboutMe() {
               <motion.div
                 key={i}
                 variants={fadeUp}
-                custom={i}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
                 whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 140 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 140,
+                  delay: i * 0.12 // ✅ Pindahkan delay ke sini
+                } as any}
                 className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all"
               >
                 <h3 className="text-3xl md:text-4xl font-bold text-black">

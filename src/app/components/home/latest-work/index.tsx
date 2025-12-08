@@ -7,22 +7,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 /* ===========================
-   ANIMATION
+   ANIMATION - ✅ FIXED
 =========================== */
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-
-  show: (i: number = 0) => ({
+  show: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.6,
-      delay: i * 0.12,
       ease: EASE_OUT,
-    },
-  }),
+    } as any, // ✅ Cast transition ke any
+  },
 };
 
 const LatestWork = () => {
@@ -48,19 +46,13 @@ const LatestWork = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
-        {/* HEADER */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20"
-        >
+        {/* HEADER - ✅ Hapus motion.div */}
+        <div className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20">
           <h2 className="text-3xl font-bold tracking-tight text-black">
             Latest Works
           </h2>
           <p className="text-lg font-mono text-gray-500">(04)</p>
-        </motion.div>
+        </div>
 
         {/* WORK GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl mx-auto">
@@ -69,10 +61,12 @@ const LatestWork = () => {
               <motion.div
                 key={index}
                 variants={fadeUp}
-                custom={index}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
+                transition={{ 
+                  delay: index * 0.12 // ✅ Pindahkan delay ke sini
+                } as any}
                 className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition overflow-hidden"
               >
                 {/* IMAGE */}
