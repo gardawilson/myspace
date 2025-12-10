@@ -53,14 +53,6 @@ export default function Footer() {
           <span>
             &copy; {new Date().getFullYear()} Garda Wilson — Fullstack & Mobile Developer
           </span>
-
-          <span className="hidden sm:inline">•</span>
-
-          <span>
-            Crafted with{" "}
-            <span className="inline-block text-black animate-pulse">❤</span>{" "}
-            using Next.js & Tailwind CSS
-          </span>
         </div>
 
       </div>

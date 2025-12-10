@@ -3,15 +3,15 @@
     "contactItems": [
       {
         "type": "email",
-        "label": "hello@imsruthi.com",
+        "label": "gardawilson@gmail.com",
         "icon": "/images/icon/mail-icon.svg",
-        "link": "mailto:hello@imsruthi.com"
+        "link": "mailto:gardawilson@gmail.com"
       },
       {
         "type": "phone",
-        "label": "+901 5588 2500",
+        "label": "+62 822 8903 2003",
         "icon": "/images/icon/call-icon.svg",
-        "link": "tel:+90155882500"
+        "link": "tel:+6282289032003"
       },
       {
         "type": "website",
@@ -104,13 +104,13 @@
     "contactInfo": [
       {
         "type": "email",
-        "label": "hello@imsruthi.com",
-        "link": "mailto:hello@imsruthi.com"
+        "label": "gardawilson@gmail.com",
+        "link": "mailto:gardawilson@gmail.com"
       },
       {
         "type": "phone",
-        "label": "+901 5588 2500",
-        "link": "tel:+90155882500"
+        "label": "+62 822 8903 2003",
+        "link": "tel:+6282289032003"
       }
     ]
   }

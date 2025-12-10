@@ -68,16 +68,16 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-white text-black min-h-screen flex items-center">
-
-      {/* Background Diagonal */}
+  
+       {/* Background Diagonal */}
       <motion.div
         className="absolute inset-0 overflow-hidden"
         initial={{ opacity: 0, x: 150 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1, ease: EASE_OUT } as any}
       >
-        <div className="absolute top-0 right-0 w-[55%] h-full bg-black transform -skew-x-12 origin-top-left translate-x-[15%]" />
-        <div className="absolute top-0 right-0 w-[45%] h-full bg-black" />
+        <div className="absolute top-0 right-0 w-[43%] h-full bg-black transform -skew-x-12 origin-top-left translate-x-[15%]" />
+        <div className="absolute top-0 right-0 w-[15%] h-full bg-black" />
       </motion.div>
 
       {/* Floating Blur Blobs */}
@@ -98,6 +98,31 @@ export default function HeroSection() {
             }}
           />
         ))}
+
+        {/* ❄ SNOWFALL EFFECT ❄ */}
+{[...Array(40)].map((_, i) => (
+  <motion.div
+    key={i}
+    className="absolute w-2 h-2 bg-white rounded-full opacity-70"
+    style={{
+      left: `${Math.random() * 100}%`,
+      top: `${-20 - Math.random() * 40}px`,
+      filter: "blur(1px)"
+    }}
+    animate={{
+      y: ["0vh", "110vh"],
+      x: [0, Math.random() * 30 - 15],
+      opacity: [1, 0.3, 1],
+    }}
+    transition={{
+      duration: Math.random() * 6 + 6,
+      repeat: Infinity,
+      ease: "linear",
+      delay: Math.random() * 5,
+    }}
+  />
+))}
+
 
       <div className="container relative z-10">
         <div className="grid lg:grid-cols-2 gap-0 items-center min-h-screen">
@@ -134,7 +159,7 @@ export default function HeroSection() {
             <motion.div className="flex gap-4">
               {[
                 {
-                  href: "mailto:your-email@example.com",
+                  href: "mailto:gardawilson@gmail.com",
                   svg: (
                     <>
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -143,7 +168,7 @@ export default function HeroSection() {
                   ),
                 },
                 {
-                  href: "https://github.com/yourusername",
+                  href: "https://github.com/gardawilson",
                   svg: (
                     <path
                       fillRule="evenodd"
@@ -159,7 +184,7 @@ export default function HeroSection() {
                   ),
                 },
                 {
-                  href: "https://linkedin.com/in/yourusername",
+                  href: "https://linkedin.com/in/gardawilson",
                   svg: (
                     <path
                       d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559
