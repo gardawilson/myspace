@@ -8,20 +8,20 @@ import { motion, useAnimation, useInView, type Variants } from "framer-motion";
 =========================== */
 const experiences = [
   {
-    year: "2021 - 2023",
-    title: "IT Staff",
-    company: "PT Kawasan Industri Medan",
-    type: "Fulltime",
+    year: "Jul 2024 — Present",
+    title: "Fullstack Mobile Developer",
+    company: "PT Ganda Saribu Utama",
+    type: "Full-time",
     description:
-      "Handled internal IT systems, network maintenance, hardware troubleshooting, and supported web-based operational systems used across departments.",
+      "Architected and led the development of a cross-platform enterprise mobile application using Flutter, supported by scalable Node.js microservices. Engineered high-performance SQL Server database structures that improved operational efficiency and ensured strong data integrity. Played a key role in digitizing core business workflows, transforming previously manual processes into reliable production systems.",
   },
   {
-    year: "2023 - Present",
-    title: "Programmer",
-    company: "Utama Corporation",
-    type: "Fulltime",
+    year: "Jun 2023 — Jun 2024",
+    title: "IT Staff (Software Engineering Intern)",
+    company: "PT Kawasan Industri Medan",
+    type: "Internship",
     description:
-      "Working as a fullstack programmer developing mobile and web applications, REST APIs, and internal enterprise systems with a focus on performance and scalability.",
+      "Developed and maintained internal web-based operational systems using React.js, Express.js, and SQL Server, supporting booking and cashier transactions for the KIM Sport Centre. Ensured system stability during high-traffic events while proactively minimizing downtime. Contributed across the full development lifecycle, from feature implementation to deployment and production support.",
   },
 ];
 

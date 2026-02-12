@@ -6,130 +6,110 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-/* ===========================
-   ANIMATION - ✅ FIXED
-=========================== */
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 40 },
   show: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: EASE_OUT,
-    } as any, // ✅ Cast transition ke any
+    transition: { duration: 0.6, ease: EASE_OUT } as any,
   },
 };
 
-const LatestWork = () => {
-  const [workData, setWorkData] = useState<any>(null);
+export default function SelectedProjects() {
+  const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(getDataPath("/data/work-data.json"));
-        if (!res.ok) throw new Error("Failed to fetch");
-        const data = await res.json();
-        setWorkData(data?.workData);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      }
-    };
-    fetchData();
+    fetch(getDataPath("/data/work-data.json"))
+      .then((res) => res.json())
+      .then((data) => setProjects(data?.workData || []))
+      .catch(console.error);
   }, []);
 
   return (
     <section className="relative bg-white py-28 overflow-hidden">
-      {/* Soft background tone */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
-        {/* HEADER - ✅ Hapus motion.div */}
-        <div className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20">
-          <h2 className="text-3xl font-bold tracking-tight text-black">
-            Latest Works
+        
+        {/* HEADER */}
+        <div className="flex items-center justify-between border-b border-black pb-5 mb-16">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Selected Projects
           </h2>
           <p className="text-lg font-mono text-gray-500">(04)</p>
         </div>
 
-        {/* WORK GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl mx-auto">
-          {workData?.map((value: any, index: number) => {
-            return (
-              <motion.div
-                key={index}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                transition={{ 
-                  delay: index * 0.12 // ✅ Pindahkan delay ke sini
-                } as any}
-                className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition overflow-hidden"
-              >
-                {/* IMAGE */}
-                <div className="relative overflow-hidden rounded-t-2xl">
-                  <Image
-                    src={getImgPath(value?.image)}
-                    alt={value?.title}
-                    width={600}
-                    height={450}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+        {/* SUBTEXT */}
+        <p className="text-gray-600 max-w-2xl mb-14">
+          A selection of production systems and applications I have engineered,
+          focusing on scalability, reliability, and real-world business impact.
+        </p>
 
-                  {/* DARK HOVER OVERLAY */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <Link
-                      href={`${value.slug}`}
-                      className="w-16 h-16 rounded-full bg-white flex items-center justify-center hover:scale-110 transition"
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+          {projects.map((project, index) => (
+            <motion.div
+              key={index}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.12 } as any}
+              className="group border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition"
+            >
+              {/* IMAGE */}
+<div className="relative w-full bg-gray-100">
+  <Image
+    src={getImgPath(project.image)}
+    alt={project.title}
+    width={1200}
+    height={800}
+    className="w-full h-auto object-contain"
+  />
+</div>
+
+
+
+              {/* CONTENT */}
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">
+                  {project.title}
+                </h3>
+
+                <p className="text-gray-600 mb-4">
+                  {project.description}
+                </p>
+
+                {/* STACK */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.stack?.map((tech: string) => (
+                    <span
+                      key={tech}
+                      className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium"
                     >
-                      <Image
-                        src={getImgPath(
-                          "/images/icon/right-arrow-icon.svg"
-                        )}
-                        alt="open"
-                        width={32}
-                        height={32}
-                      />
-                    </Link>
-                  </div>
+                      {tech}
+                    </span>
+                  ))}
                 </div>
 
-                {/* CONTENT */}
-                <div className="relative p-6 flex flex-col gap-2">
-                  {/* Watermark */}
-                  <div className="absolute -right-4 -bottom-4 opacity-[0.05] pointer-events-none">
-                    <Image
-                      src={getImgPath("/images/icon/work.svg")}
-                      alt="watermark"
-                      width={140}
-                      height={140}
-                    />
-                  </div>
+                {/* ROLE */}
+                <p className="text-sm text-gray-500 mb-6">
+                  Role: <span className="text-black font-medium">{project.role}</span>
+                </p>
 
-                  <Link href={`${value.slug}`}>
-                    <h3 className="text-xl font-bold text-black hover:underline">
-                      {value?.title}
-                    </h3>
-                  </Link>
-
-                  <p className="text-sm text-gray-500">
-                    Client: <span className="text-black">{value?.client}</span>
-                  </p>
-
-                  <div className="mt-4 flex items-center gap-2 text-sm font-mono text-gray-400">
-                    View Project →
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                <Link
+                  href={project.slug}
+                  className="font-semibold hover:underline"
+                >
+                  View Project →
+                </Link>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
   );
-};
-
-export default LatestWork;
+}

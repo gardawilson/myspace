@@ -3,10 +3,11 @@
 import { motion, type Variants } from "framer-motion";
 
 const stats = [
-  { count: "03", label: "Years of Experience" },
-  { count: "40+", label: "Projects Completed" },
-  { count: "25+", label: "Happy Clients" },
+  { count: "2+", label: "Years of Experience" },
+  { count: "5+", label: "Projects Delivered" },
+  { count: "3+", label: "Production Systems Built" },
 ];
+
 
 // ✅ FIXED: Ubah ease string jadi array atau gunakan 'as any'
 const fadeUp: Variants = {
@@ -42,28 +43,43 @@ export default function AboutMe() {
         <div className="max-w-4xl space-y-16">
 
           {/* MAIN NARRATIVE */}
-          <motion.p
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="text-gray-700 leading-relaxed text-base md:text-lg"
-          >
-            I am a Fullstack Developer with a Bachelor's degree in Computer Science,
-            specializing in both mobile and web application development. With more than
-            three years of professional experience, I have been actively involved in
-            delivering reliable, scalable, and high-performance digital products.
-            <br /><br />
-            I approach every project with a strong focus on clean architecture,
-            maintainable code, and long-term system sustainability. I believe that great
-            software is not just about functionality, but also about how well it solves
-            real-world problems efficiently and elegantly.
-            <br /><br />
-            Throughout my career, I have worked across multiple stages of development —
-            from designing application flow, implementing backend services, integrating
-            APIs, to deploying production-ready applications. This allows me to see
-            products not just as features, but as complete systems built for real users.
-          </motion.p>
+<motion.p
+  variants={fadeUp}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true }}
+  className="text-gray-700 leading-relaxed text-base md:text-lg"
+>
+  I am a Full-Stack Mobile Developer focused on building scalable,
+  production-grade applications that power real business operations.
+  With professional experience across both enterprise systems and
+  high-usage internal platforms, I specialize in delivering reliable
+  end-to-end solutions — from backend architecture to mobile deployment.
+
+  <br /><br />
+
+  I have architected and developed microservice-driven backends using
+  Node.js and C#, engineered high-performance database structures in
+  Microsoft SQL Server, and led mobile application development with
+  Flutter for multi-platform environments. My work has contributed to
+  the successful digitalization of operational workflows, improving
+  efficiency, system reliability, and data integrity.
+
+  <br /><br />
+
+  I operate with a strong engineering mindset centered on clean
+  architecture, performance optimization, and long-term maintainability.
+  Rather than simply shipping features, I focus on building systems that
+  scale, remain resilient under load, and create measurable value for
+  organizations.
+
+  <br /><br />
+
+  Currently, I am expanding my expertise in distributed systems and
+  modern backend architecture while continuing to craft seamless mobile
+  experiences.
+</motion.p>
+
 
           {/* STATS */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
