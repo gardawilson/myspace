@@ -29,7 +29,7 @@ const page = () => {
       </section>
 
       {/* PROJECTS */}
-      <section id="projects">
+      <section>
         <LatestWork />
       </section>
 

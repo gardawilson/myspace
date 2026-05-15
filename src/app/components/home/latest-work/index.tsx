@@ -28,7 +28,7 @@ export default function SelectedProjects() {
   }, []);
 
   return (
-    <section className="relative bg-white py-28 overflow-hidden">
+    <section id="projects" className="relative bg-white py-28 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4">
@@ -103,7 +103,7 @@ export default function SelectedProjects() {
                   href={project.slug}
                   className="font-semibold hover:underline"
                 >
-                  View Project →
+                  View Project 
                 </Link>
               </div>
             </motion.div>
@@ -113,3 +113,4 @@ export default function SelectedProjects() {
     </section>
   );
 }
+

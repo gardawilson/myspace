@@ -49,6 +49,24 @@ const fadeRight: Variants = {
   },
 };
 
+const deterministicRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+const snowflakes = Array.from({ length: 40 }, (_, i) => {
+  const seed = i + 1;
+
+  return {
+    id: i,
+    left: deterministicRandom(seed * 11) * 100,
+    top: -20 - deterministicRandom(seed * 13) * 40,
+    drift: deterministicRandom(seed * 17) * 30 - 15,
+    duration: deterministicRandom(seed * 19) * 6 + 6,
+    delay: deterministicRandom(seed * 23) * 5,
+  };
+});
+
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const [hoverImage, setHoverImage] = useState(false);
@@ -100,25 +118,25 @@ export default function HeroSection() {
         ))}
 
         {/* ❄ SNOWFALL EFFECT ❄ */}
-{[...Array(40)].map((_, i) => (
+{snowflakes.map((flake) => (
   <motion.div
-    key={i}
+    key={flake.id}
     className="absolute w-2 h-2 bg-white rounded-full opacity-70"
     style={{
-      left: `${Math.random() * 100}%`,
-      top: `${-20 - Math.random() * 40}px`,
+      left: `${flake.left}%`,
+      top: `${flake.top}px`,
       filter: "blur(1px)"
     }}
     animate={{
       y: ["0vh", "110vh"],
-      x: [0, Math.random() * 30 - 15],
+      x: [0, flake.drift],
       opacity: [1, 0.3, 1],
     }}
     transition={{
-      duration: Math.random() * 6 + 6,
+      duration: flake.duration,
       repeat: Infinity,
       ease: "linear",
-      delay: Math.random() * 5,
+      delay: flake.delay,
     }}
   />
 ))}

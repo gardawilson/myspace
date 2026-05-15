@@ -6,7 +6,68 @@
       "description": "Engineered a cross-platform mobile system to digitize wood production workflows, improving operational visibility and reducing manual reporting.",
       "stack": ["Flutter", "Node.js", "SQL Server", "REST API"],
       "role": "Fullstack Mobile Developer",
-      "slug": "/projects/wood-processing-system"
+      "slug": "/projects/wood-processing-system",
+      "caseStudy": {
+        "overview": "A mobile-first operations system for timber processing activities, replacing fragmented paper logs and manual recap spreadsheets used by production supervisors.",
+        "period": "2024",
+        "team": "1 Mobile + 1 Backend + 1 QA",
+        "problem": "Production data was recorded manually and synchronized at the end of shifts, causing delays, data mismatch, and low visibility for management.",
+        "goals": [
+          "Capture production events in real time from shop-floor operators",
+          "Reduce manual recap and duplicate input between departments",
+          "Provide daily production progress and bottleneck visibility"
+        ],
+        "responsibilities": [
+          "Built Flutter mobile modules for production input and approvals",
+          "Designed and implemented REST API integration with Node.js backend",
+          "Optimized SQL Server query flows for faster dashboard response",
+          "Worked with production team to refine data validation rules"
+        ],
+        "architecture": "Mobile Flutter clients communicate with Node.js REST services, backed by SQL Server for transactional production data and reporting aggregation.",
+        "keyFeatures": [
+          "Shift-based production submission with validation",
+          "Material usage and output tracking per process stage",
+          "Supervisor approval flow with audit trail",
+          "Daily summary and performance recap"
+        ],
+        "impact": [
+          "Reduced reporting lag from end-of-day to near real-time input",
+          "Lowered manual recap workload for production admin team",
+          "Improved traceability for production discrepancies"
+        ],
+        "challenges": [
+          {
+            "title": "Unstable network in factory areas",
+            "solution": "Implemented retry strategy and resilient request handling for unreliable connectivity."
+          },
+          {
+            "title": "Inconsistent operator input format",
+            "solution": "Added strict form validation and constrained selectable values by workstation."
+          }
+        ],
+        "screenshots": [
+          {
+            "image": "/images/work/WPS_Screenshot_2026-02-12-08-23-06-209_com.example (2).jpg",
+            "caption": "Login page"
+          },
+          {
+            "image": "/images/work/WPS_Screenshot_2026-02-12-08-23-06-209_com.example (3).jpg",
+            "caption": "Main Menu"
+          },
+                   {
+            "image": "/images/work/WPS_Screenshot_2026-02-12-08-23-06-209_com.example (4).jpg",
+            "caption": "Label"
+          },
+                             {
+            "image": "/images/work/WPS_Screenshot_2026-02-12-08-23-06-209_com.example (6).jpg",
+            "caption": "Proses"
+          },
+                                       {
+            "image": "/images/work/WPS_Screenshot_2026-02-12-08-23-06-209_com.example (7).jpg",
+            "caption": "Sawmill"
+          }
+        ]
+      }
     },
     {
       "image": "/images/work/PPS.png",
@@ -14,7 +75,56 @@
       "description": "Developed a production monitoring mobile application enabling real-time tracking of manufacturing activities and enhancing data accuracy across departments.",
       "stack": ["Flutter", "Express.js", "SQL Server"],
       "role": "Fullstack Mobile Developer",
-      "slug": "/projects/plastic-production-system"
+      "slug": "/projects/plastic-production-system",
+      "caseStudy": {
+        "overview": "Operational mobile app for plastic manufacturing lines that unifies production updates, quality checkpoints, and shift handover notes in one system.",
+        "period": "2024",
+        "team": "1 Mobile + 1 Backend + 1 Product Owner",
+        "problem": "Each line tracked activity in separate spreadsheets and messaging groups, making production status and quality events hard to consolidate.",
+        "goals": [
+          "Standardize production and quality data collection",
+          "Provide one source of truth for shift performance",
+          "Improve handover quality between morning and night shifts"
+        ],
+        "responsibilities": [
+          "Developed core Flutter screens for production and QC flow",
+          "Implemented role-based access and screen-level permissions",
+          "Integrated mobile app with Express.js APIs",
+          "Supported user acceptance testing with line supervisors"
+        ],
+        "architecture": "Flutter mobile frontend consumes Express.js APIs with SQL Server storage, with role-based data access to separate operator, QC, and supervisor views.",
+        "keyFeatures": [
+          "Real-time production status update per machine line",
+          "QC checkpoint recording with issue tagging",
+          "Shift handover note and pending action list",
+          "Alert indicator for abnormal production patterns"
+        ],
+        "impact": [
+          "Increased consistency of production and QC records",
+          "Reduced communication gaps during shift transitions",
+          "Accelerated supervisor review for line issues"
+        ],
+        "challenges": [
+          {
+            "title": "Different workflow across production lines",
+            "solution": "Designed configurable forms and status mapping per line type."
+          },
+          {
+            "title": "Resistance to replacing spreadsheet habits",
+            "solution": "Introduced progressive rollout and training with parallel run period."
+          }
+        ],
+        "screenshots": [
+          {
+            "image": "/images/work/work-img-3.jpg",
+            "caption": "Line status overview and issue flags"
+          },
+          {
+            "image": "/images/work/work-img-4.jpg",
+            "caption": "Quality checkpoint capture workflow"
+          }
+        ]
+      }
     },
     {
       "image": "/images/work/MCS.png",
@@ -22,7 +132,56 @@
       "description": "Architected a mobile-first maintenance platform that streamlined equipment tracking, reduced downtime, and improved preventive maintenance workflows.",
       "stack": ["Flutter", "Node.js", "Microservices", "SQL Server"],
       "role": "Fullstack Mobile Developer",
-      "slug": "/projects/maintenance-system"
+      "slug": "/projects/maintenance-system",
+      "caseStudy": {
+        "overview": "A maintenance platform focused on preventive scheduling and fast issue handling for production equipment in a multi-department manufacturing environment.",
+        "period": "2025",
+        "team": "1 Mobile + 2 Backend + 1 QA",
+        "problem": "Maintenance tickets were tracked manually and often reacted too late, resulting in repeated machine downtime and unclear responsibility follow-up.",
+        "goals": [
+          "Digitize maintenance request and assignment flow",
+          "Enforce preventive maintenance scheduling discipline",
+          "Give management visibility on downtime and response time"
+        ],
+        "responsibilities": [
+          "Implemented mobile ticketing and maintenance task modules",
+          "Integrated microservice endpoints for work order lifecycle",
+          "Designed notification and escalation behavior for overdue jobs",
+          "Aligned data model with maintenance and operations stakeholders"
+        ],
+        "architecture": "Flutter mobile app integrates with Node.js microservices for ticketing, scheduling, and notifications, with SQL Server for core records and historical analytics.",
+        "keyFeatures": [
+          "Maintenance ticket creation with priority classification",
+          "Work order assignment and progress tracking",
+          "Preventive maintenance calendar and reminders",
+          "Downtime reporting and response-time analytics"
+        ],
+        "impact": [
+          "Improved preventive maintenance compliance",
+          "Shortened response cycle for high-priority machine issues",
+          "Provided clearer ownership across maintenance tasks"
+        ],
+        "challenges": [
+          {
+            "title": "Complex approval flow between departments",
+            "solution": "Introduced explicit status transitions and owner handoff rules."
+          },
+          {
+            "title": "Notification overload for non-critical issues",
+            "solution": "Added priority-based notification throttling and escalation rules."
+          }
+        ],
+        "screenshots": [
+          {
+            "image": "/images/work/work-img-5.jpg",
+            "caption": "Maintenance ticket list and SLA status"
+          },
+          {
+            "image": "/images/work/work-img-6.jpg",
+            "caption": "Preventive maintenance schedule view"
+          }
+        ]
+      }
     }
   ]
 }

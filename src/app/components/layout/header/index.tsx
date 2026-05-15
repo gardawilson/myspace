@@ -1,254 +1,272 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { getImgPath } from "@/utils/image";
 
 const navLinks = [
-  { name: "Home", href: "#" },
+  { name: "Home", href: "#home" },
   { name: "Experience", href: "#experience" },
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
   { name: "Contact", href: "#contact" },
 ];
 
-export default function Header() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("Home");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-  const { scrollYProgress } = useScroll();
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+function DecryptText({ text }: { text: string }) {
+  const [displayText, setDisplayText] = useState(text);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const runDecrypt = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    let frame = 0;
+    intervalRef.current = setInterval(() => {
+      setDisplayText(
+        text
+          .split("")
+          .map((char, index) => {
+            if (char === " ") return " ";
+            if (index < frame) return text[index];
+            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+          })
+          .join("")
+      );
+
+      frame += 0.5;
+      if (frame >= text.length) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        setDisplayText(text);
+      }
+    }, 24);
+  };
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handler);
-    return () => window.removeEventListener("scroll", handler);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  return (
+    <span onMouseEnter={runDecrypt} onFocus={runDecrypt}>
+      {displayText}
+    </span>
+  );
+}
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled((prev) => {
+        if (!prev && window.scrollY > 80) return true;
+        if (prev && window.scrollY < 52) return false;
+        return prev;
+      });
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
+    const visibilityMap = new Map<string, number>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id || "Home");
+          visibilityMap.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRatio : 0
+          );
+        });
+
+        let nextActive = "home";
+        let maxRatio = 0;
+
+        visibilityMap.forEach((ratio, id) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio;
+            nextActive = id;
           }
         });
+
+        if (maxRatio > 0) {
+          setActiveSection(nextActive);
+        }
       },
-      { threshold: 0.5 }
+      {
+        threshold: [0.2, 0.35, 0.5, 0.65],
+        rootMargin: "-18% 0px -45% 0px",
+      }
     );
 
     const sections = document.querySelectorAll("section[id]");
     sections.forEach((section) => observer.observe(section));
 
-    return () => sections.forEach((section) => observer.unobserve(section));
-  }, []);
-
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
     };
-    window.addEventListener("mousemove", handleMouse);
-    return () => window.removeEventListener("mousemove", handleMouse);
   }, []);
 
   return (
     <>
-      {/* HEADER */}
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }}
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700
-          ${
-            scrolled
-              ? "bg-black/80 backdrop-blur-2xl border-b border-white/10 py-2 shadow-lg"
-              : "bg-black/40 backdrop-blur-md py-4 border-b border-white/5"
-          }
-        `}
-      >
-        <nav className="container mx-auto px-6 flex items-center justify-between relative">
-          {/* Animated glow following mouse */}
+      <header className="fixed left-1/2 top-0 z-[100] -translate-x-1/2">
+        <div className="pt-4">
           <motion.div
-            className="absolute inset-0 pointer-events-none overflow-hidden"
-            style={{
-              background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 255, 255, 0.05), transparent 40%)`,
-            }}
-          />
-
-          {/* LOGO */}
-          <motion.a
-            href="/"
-            className="relative z-20 flex items-center gap-3 select-none group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            layout
+            transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.9 } as any}
+            className={`relative overflow-hidden border border-white/10 bg-[#101114] shadow-[0_14px_45px_rgba(0,0,0,0.45)] ${
+              scrolled ? "rounded-full px-3 py-2.5" : "rounded-[28px] px-4 py-3"
+            }`}
           >
-            <img
-              src="/images/logo/logo_title.png"
-              alt="logo"
-              width={140}
-              height={40}
-              className="object-contain"
-            />
-          </motion.a>
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.08),transparent_45%),radial-gradient(circle_at_100%_100%,rgba(255,255,255,0.03),transparent_40%)]" />
 
-          {/* DESKTOP NAV */}
-          <motion.div
-            className="hidden md:flex items-center gap-1 bg-white/5 px-3 py-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-lg relative overflow-hidden"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            {/* Shimmer background */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              animate={{ x: ["-100%", "200%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            />
-
-            {navLinks.map((link, idx) => {
-              const isActive =
-                activeSection === link.name ||
-                (link.href !== "#" &&
-                  activeSection === link.href.replace("#", ""));
-
-              return (
-                <motion.a
-                  href={link.href}
-                  key={link.name}
-                  initial={{ opacity: 0, y: -20 }}
+            <AnimatePresence mode="popLayout" initial={false}>
+              {scrolled ? (
+                <motion.div
+                  key="compact-header"
+                  layout
+                  initial={{ opacity: 0, y: -6, scale: 0.985 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + idx * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300
-                      ${
-                        isActive
-                          ? "text-white"
-                          : "text-white/60 hover:text-white"
-                      }
-                    `}
+                  exit={{ opacity: 0, y: -4, scale: 0.99 }}
+                  transition={{ type: "spring", stiffness: 170, damping: 20 } as any}
+                  className="relative flex items-center gap-3"
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="navActive"
-                      className="absolute inset-0 rounded-xl bg-white/10 border border-white/15"
-                      transition={{
-                        type: "spring",
-                        duration: 0.6,
-                        bounce: 0.2,
-                      }}
+                  <a href="#home" className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
+                    <Image
+                      src={getImgPath("/images/home/banner/my-photo.png")}
+                      alt="Garda Wilson"
+                      fill
+                      sizes="40px"
+                      className="object-cover object-top"
                     />
-                  )}
+                  </a>
 
-                  <span className="relative z-10">{link.name}</span>
-                </motion.a>
-              );
-            })}
+                  <a href="#contact" className="flex items-center gap-2.5 pr-2 text-base font-medium text-white">
+                    <span>Available for work</span>
+                    <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-400">
+                      <span className="absolute inset-0 rounded-full bg-emerald-400/50 blur-[2px]" />
+                    </span>
+                  </a>
+
+                  <button
+                    onClick={() => setOpen((prev) => !prev)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-xs font-medium text-white md:hidden"
+                    aria-label="Toggle menu"
+                  >
+                    {open ? "X" : "Menu"}
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="full-header"
+                  layout
+                  initial={{ opacity: 0, y: 6, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4, scale: 0.995 }}
+                  transition={{ type: "spring", stiffness: 170, damping: 20 } as any}
+                  className="relative flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-5">
+                    <a href="#home" className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
+                      <Image
+                        src={getImgPath("/images/home/banner/my-photo.png")}
+                        alt="Garda Wilson"
+                        fill
+                        sizes="40px"
+                        className="object-cover object-top"
+                      />
+                    </a>
+
+                    <nav className="hidden items-center gap-8 md:flex">
+                      {navLinks.map((link) => {
+                        const sectionId = link.href.replace("#", "");
+                        const isActive = activeSection === sectionId;
+
+                        return (
+                          <a
+                            key={link.name}
+                            href={link.href}
+                            className={`relative rounded-full text-base font-medium transition ${
+                              link.name === "Contact"
+                                ? `px-8 py-2.5 ${
+                                    isActive
+                                      ? "bg-white text-black ring-2 ring-white/50"
+                                      : "bg-white text-black hover:bg-white/90"
+                                  }`
+                                : `px-3 py-2 ${
+                                    isActive ? "text-white" : "text-white/95 hover:text-white"
+                                  }`
+                            }`}
+                          >
+                            {isActive && link.name !== "Contact" && (
+                              <motion.span
+                                layoutId="activeSectionNav"
+                                className="absolute inset-0 rounded-full bg-white/12"
+                                transition={{ type: "spring", stiffness: 340, damping: 30 } as any}
+                              />
+                            )}
+                            <span className="relative z-10">
+                              <DecryptText text={link.name} />
+                            </span>
+                          </a>
+                        );
+                      })}
+                    </nav>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setOpen((prev) => !prev)}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-sm font-medium text-white md:hidden"
+                      aria-label="Toggle menu"
+                    >
+                      {open ? "X" : "Menu"}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
+        </div>
+      </header>
 
-          {/* MOBILE MENU BUTTON */}
-          <motion.button
-            onClick={() => setOpen(true)}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="md:hidden relative w-12 h-12 flex flex-col justify-center items-center gap-1.5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl overflow-hidden group"
-          >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0"
-              animate={{ x: ["-100%", "100%"] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            />
-            <span className="w-6 h-0.5 bg-white rounded-full z-10" />
-            <span className="w-6 h-0.5 bg-white rounded-full z-10" />
-            <span className="w-6 h-0.5 bg-white rounded-full z-10" />
-          </motion.button>
-        </nav>
-
-        {/* SCROLL PROGRESS */}
-        <motion.div
-          style={{ width: progressWidth }}
-          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-white/20 via-white/60 to-white/20"
-        />
-      </motion.header>
-
-      {/* MOBILE MENU PANEL */}
       <AnimatePresence>
         {open && (
-          <>
-            {/* BACKDROP */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-md z-[90]"
-            />
-
-            {/* SIDE PANEL */}
-            <motion.div
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "100%", opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white backdrop-blur-xl border-l border-gray-200 shadow-2xl z-[100] p-8 overflow-hidden"
-            >
-              {/* CLOSE BUTTON */}
-              <motion.button
-                onClick={() => setOpen(false)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="absolute top-6 right-6 w-12 h-12 bg-black/5 border border-gray-300 rounded-2xl text-xl flex items-center justify-center"
-              >
-                ✕
-              </motion.button>
-
-              {/* MENU LINKS */}
-              <motion.ul
-                initial="hidden"
-                animate="show"
-                exit="hidden"
-                variants={{
-                  show: {
-                    transition: {
-                      staggerChildren: 0.08,
-                      delayChildren: 0.15,
-                    },
-                  },
-                  hidden: {
-                    transition: {
-                      staggerChildren: 0.05,
-                      staggerDirection: -1,
-                    },
-                  },
-                }}
-                className="space-y-6 mt-20"
-              >
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-x-0 top-[84px] z-[95] px-6 md:hidden"
+          >
+            <div className="rounded-2xl border border-white/10 bg-[#101114] p-4 shadow-xl">
+              <nav className="space-y-1">
                 {navLinks.map((link) => (
-                  <motion.li
+                  <a
                     key={link.name}
-                    variants={{
-                      show: { opacity: 1, x: 0 },
-                      hidden: { opacity: 0, x: 60 },
-                    }}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={`block rounded-lg px-3 py-3 text-base font-medium transition ${
+                      activeSection === link.href.replace("#", "")
+                        ? "bg-white/15 text-white"
+                        : "text-white/90 hover:bg-white/10 hover:text-white"
+                    }`}
                   >
-                    <motion.a
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      whileHover={{ x: 10 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-4 text-3xl font-bold text-black/90 hover:text-black group"
-                    >
-                      {/* Elegant Bullet Indicator */}
-                      <span className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-700 to-black group-hover:scale-125 transition-transform"></span>
-
-                      {link.name}
-                    </motion.a>
-                  </motion.li>
+                    {link.name}
+                  </a>
                 ))}
-              </motion.ul>
-            </motion.div>
-          </>
+              </nav>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
