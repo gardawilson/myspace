@@ -68,37 +68,73 @@ const Contact = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  return (
-    <section className="relative bg-white py-28 overflow-hidden">
-      {/* Soft background tone */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 opacity-80 pointer-events-none" />
+  const email = contactData?.contactInfo?.find((i: any) => i.type === "email");
+  const phone = contactData?.contactInfo?.find((i: any) => i.type === "phone");
 
-      <div className="relative z-10 container mx-auto px-4">
-        {/* HEADER */}
+  return (
+    <section className="relative bg-black py-24 md:py-28">
+      <div className="container relative z-10 mx-auto px-4">
+        {/* ================= CTA BAND ================= */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="flex items-center justify-between gap-2 border-b border-black pb-5 mb-20"
+          className="mb-16 flex flex-col gap-8 border-b border-white/15 pb-16"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-black">
-            Contact
-          </h2>
-          <p className="text-lg font-mono text-gray-500">(05)</p>
+          <p className="font-mono text-sm text-white/50">
+            That&apos;s all for now.
+          </p>
+
+          <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+            <h2 className="text-4xl font-medium leading-tight text-white md:text-6xl">
+              Got a project in mind?
+              <br />
+              Let&apos;s talk
+            </h2>
+
+            <a
+              href="#contact-form"
+              className="flex size-[140px] shrink-0 items-center justify-center rounded-full bg-blue-600 text-center text-lg font-medium text-white transition hover:bg-blue-500"
+            >
+              Get in touch
+            </a>
+          </div>
+
+          <div className="flex flex-wrap gap-x-14 gap-y-4 pt-4">
+            {email && (
+              <div>
+                <p className="mb-1 text-sm text-white/40">Email:</p>
+                <a href={email.link} className="text-xl text-white hover:underline">
+                  {email.label}
+                </a>
+              </div>
+            )}
+            {phone && (
+              <div>
+                <p className="mb-1 text-sm text-white/40">Phone</p>
+                <a href={phone.link} className="text-xl text-white hover:underline">
+                  {phone.label}
+                </a>
+              </div>
+            )}
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+        <div
+          id="contact-form"
+          className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2"
+        >
           {/* ================= FORM CARD ================= */}
           <motion.div
             variants={fadeUp}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition-shadow p-10 overflow-hidden"
+            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-10 backdrop-blur-sm transition-shadow hover:shadow-xl"
           >
             {/* Watermark */}
-            <div className="absolute -right-6 -bottom-6 opacity-[0.08] pointer-events-none">
+            <div className="pointer-events-none absolute -bottom-6 -right-6 opacity-[0.08] invert">
               <Image
                 src={getImgPath("/images/icon/mail.svg")}
                 alt="contact"
@@ -108,9 +144,9 @@ const Contact = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <label className="block mb-2 font-medium text-black/80">
+                  <label className="mb-2 block font-medium text-white/80">
                     Name *
                   </label>
                   <input
@@ -118,13 +154,13 @@ const Contact = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full border-b border-black/30 focus:border-black/80 outline-none py-2 bg-transparent"
+                    className="w-full border-b border-white/30 bg-transparent py-2 text-white outline-none placeholder:text-white/30 focus:border-white/80"
                     placeholder="Your Name"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 font-medium text-black/80">
+                  <label className="mb-2 block font-medium text-white/80">
                     Phone *
                   </label>
                   <input
@@ -132,14 +168,14 @@ const Contact = () => {
                     name="number"
                     value={formData.number}
                     onChange={handleChange}
-                    className="w-full border-b border-black/30 focus:border-black/80 outline-none py-2 bg-transparent"
+                    className="w-full border-b border-white/30 bg-transparent py-2 text-white outline-none placeholder:text-white/30 focus:border-white/80"
                     placeholder="Your Phone"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-black/80">
+                <label className="mb-2 block font-medium text-white/80">
                   Email *
                 </label>
                 <input
@@ -148,13 +184,13 @@ const Contact = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full border-b border-black/30 focus:border-black/80 outline-none py-2 bg-transparent"
+                  className="w-full border-b border-white/30 bg-transparent py-2 text-white outline-none placeholder:text-white/30 focus:border-white/80"
                   placeholder="Your Email"
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-black/80">
+                <label className="mb-2 block font-medium text-white/80">
                   Message *
                 </label>
                 <textarea
@@ -163,13 +199,13 @@ const Contact = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full border-b border-black/30 focus:border-black/80 outline-none py-2 bg-transparent"
+                  className="w-full border-b border-white/30 bg-transparent py-2 text-white outline-none placeholder:text-white/30 focus:border-white/80"
                   placeholder="Your Message"
                 />
               </div>
 
               {submitted && (
-                <div className="flex items-center gap-2 text-black/80">
+                <div className="flex items-center gap-2 text-white/80">
                   <Image
                     src={getImgPath("/images/icon/success-icon.svg")}
                     alt="success"
@@ -182,7 +218,7 @@ const Contact = () => {
 
               <button
                 type="submit"
-                className="px-8 py-3 rounded-full border border-black text-black font-medium hover:bg-black hover:text-white transition"
+                className="rounded-full border border-white px-8 py-3 font-medium text-white transition hover:bg-white hover:text-black"
               >
                 Send Message
               </button>
@@ -196,30 +232,30 @@ const Contact = () => {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2"
           >
             {contactData?.contactInfo?.map((info: any, i: number) => (
               <div
                 key={i}
-                className="relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition p-6 overflow-hidden"
+                className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
               >
-                <p className="text-sm text-gray-400 mb-1">{info.title}</p>
-                <Link
-                  href="#!"
-                  className="text-lg font-semibold text-black hover:underline"
+                <p className="mb-1 text-sm text-white/40">{info.title}</p>
+                <a
+                  href={info.link}
+                  className="text-lg font-semibold text-white hover:underline"
                 >
                   {info.label}
-                </Link>
+                </a>
               </div>
             ))}
 
             {contactData?.socialLinks?.map((link: any, i: number) => (
               <div
                 key={i}
-                className="relative bg-gradient-to-br from-gray-900 to-black text-white border border-gray-800 rounded-2xl shadow-xl p-6"
+                className="relative rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-xl"
               >
-                <p className="text-sm text-white/60 mb-1">Social</p>
-                <Link href="#!" className="text-lg font-semibold">
+                <p className="mb-1 text-sm text-white/40">Social</p>
+                <Link href={link.href || "#"} className="text-lg font-semibold text-white">
                   {link.title}
                 </Link>
               </div>

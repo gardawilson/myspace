@@ -1,274 +1,110 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import { getImgPath } from "@/utils/image";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Home, Terminal, Box, FileText, ArrowUpRight } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import type { IconType } from "react-icons";
+import type { LucideIcon } from "lucide-react";
 
-const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "Experience", href: "#experience" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Contact", href: "#contact" },
+type DockLink = {
+  type: "link" | "external";
+  href: string;
+  label: string;
+  icon: LucideIcon | IconType;
+  sectionId?: string;
+};
+
+const dockLinks: DockLink[] = [
+  { type: "link", href: "#home", label: "Home", icon: Home, sectionId: "home" },
+  { type: "link", href: "#experience", label: "Experience", icon: Terminal, sectionId: "experience" },
+  { type: "link", href: "#skills", label: "Skills", icon: Box, sectionId: "skills" },
+  { type: "link", href: "#projects", label: "Projects", icon: FileText, sectionId: "projects" },
+  { type: "link", href: "#contact", label: "Contact", icon: ArrowUpRight, sectionId: "contact" },
+  { type: "external", href: "https://github.com/gardawilson", label: "GitHub", icon: FaGithub },
 ];
 
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-function DecryptText({ text }: { text: string }) {
-  const [displayText, setDisplayText] = useState(text);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const runDecrypt = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-
-    let frame = 0;
-    intervalRef.current = setInterval(() => {
-      setDisplayText(
-        text
-          .split("")
-          .map((char, index) => {
-            if (char === " ") return " ";
-            if (index < frame) return text[index];
-            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-          })
-          .join("")
-      );
-
-      frame += 0.5;
-      if (frame >= text.length) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        setDisplayText(text);
-      }
-    }, 24);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
+function DockButton({ item, isActive }: { item: DockLink; isActive: boolean }) {
+  const Icon = item.icon;
 
   return (
-    <span onMouseEnter={runDecrypt} onFocus={runDecrypt}>
-      {displayText}
-    </span>
+    <a
+      href={item.href}
+      target={item.type === "external" ? "_blank" : undefined}
+      rel={item.type === "external" ? "noopener noreferrer" : undefined}
+      aria-label={item.label}
+      title={item.label}
+      className={`relative flex size-[42px] shrink-0 items-center justify-center rounded-full transition md:size-[50px] ${
+        isActive ? "bg-white text-black" : "bg-[#262626] text-white hover:bg-[#333]"
+      }`}
+    >
+      <Icon size={20} />
+    </a>
   );
 }
 
+const SECTION_IDS = ["home", "about", "experience", "skills", "projects", "contact"];
+const PINNED_TOP = 16;
+
 export default function Header() {
-  const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const [scrolled, setScrolled] = useState(false);
+  const [topOffset, setTopOffset] = useState(PINNED_TOP);
 
   useEffect(() => {
+    const REFERENCE_OFFSET = 140; // px from top, clears the fixed dock
+
     const onScroll = () => {
-      setScrolled((prev) => {
-        if (!prev && window.scrollY > 80) return true;
-        if (prev && window.scrollY < 52) return false;
-        return prev;
-      });
+      // Active-section tracking
+      let current = SECTION_IDS[0];
+
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top - REFERENCE_OFFSET <= 0) {
+          current = id;
+        }
+      }
+
+      setActiveSection(current);
+
+      // Dock position: sits at the hero anchor (below the name) until
+      // scrolling carries it above PINNED_TOP, then it stays pinned there.
+      const anchor = document.getElementById("hero-nav-anchor");
+      if (!anchor) {
+        setTopOffset(PINNED_TOP);
+        return;
+      }
+      setTopOffset(Math.max(PINNED_TOP, anchor.getBoundingClientRect().top));
     };
 
     onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const visibilityMap = new Map<string, number>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          visibilityMap.set(
-            entry.target.id,
-            entry.isIntersecting ? entry.intersectionRatio : 0
-          );
-        });
-
-        let nextActive = "home";
-        let maxRatio = 0;
-
-        visibilityMap.forEach((ratio, id) => {
-          if (ratio > maxRatio) {
-            maxRatio = ratio;
-            nextActive = id;
-          }
-        });
-
-        if (maxRatio > 0) {
-          setActiveSection(nextActive);
-        }
-      },
-      {
-        threshold: [0.2, 0.35, 0.5, 0.65],
-        rootMargin: "-18% 0px -45% 0px",
-      }
-    );
-
-    const sections = document.querySelectorAll("section[id]");
-    sections.forEach((section) => observer.observe(section));
-
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      sections.forEach((section) => observer.unobserve(section));
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
   return (
-    <>
-      <header className="fixed left-1/2 top-0 z-[100] -translate-x-1/2">
-        <div className="pt-4">
-          <motion.div
-            layout
-            transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.9 } as any}
-            className={`relative overflow-hidden border border-white/10 bg-[#101114] shadow-[0_14px_45px_rgba(0,0,0,0.45)] ${
-              scrolled ? "rounded-full px-3 py-2.5" : "rounded-[28px] px-4 py-3"
-            }`}
-          >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.08),transparent_45%),radial-gradient(circle_at_100%_100%,rgba(255,255,255,0.03),transparent_40%)]" />
-
-            <AnimatePresence mode="popLayout" initial={false}>
-              {scrolled ? (
-                <motion.div
-                  key="compact-header"
-                  layout
-                  initial={{ opacity: 0, y: -6, scale: 0.985 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4, scale: 0.99 }}
-                  transition={{ type: "spring", stiffness: 170, damping: 20 } as any}
-                  className="relative flex items-center gap-3"
-                >
-                  <a href="#home" className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
-                    <Image
-                      src={getImgPath("/images/home/banner/my-photo.png")}
-                      alt="Garda Wilson"
-                      fill
-                      sizes="40px"
-                      className="object-cover object-top"
-                    />
-                  </a>
-
-                  <a href="#contact" className="flex items-center gap-2.5 pr-2 text-base font-medium text-white">
-                    <span>Available for work</span>
-                    <span className="relative h-2.5 w-2.5 rounded-full bg-emerald-400">
-                      <span className="absolute inset-0 rounded-full bg-emerald-400/50 blur-[2px]" />
-                    </span>
-                  </a>
-
-                  <button
-                    onClick={() => setOpen((prev) => !prev)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-xs font-medium text-white md:hidden"
-                    aria-label="Toggle menu"
-                  >
-                    {open ? "X" : "Menu"}
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="full-header"
-                  layout
-                  initial={{ opacity: 0, y: 6, scale: 0.99 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4, scale: 0.995 }}
-                  transition={{ type: "spring", stiffness: 170, damping: 20 } as any}
-                  className="relative flex items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-5">
-                    <a href="#home" className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
-                      <Image
-                        src={getImgPath("/images/home/banner/my-photo.png")}
-                        alt="Garda Wilson"
-                        fill
-                        sizes="40px"
-                        className="object-cover object-top"
-                      />
-                    </a>
-
-                    <nav className="hidden items-center gap-8 md:flex">
-                      {navLinks.map((link) => {
-                        const sectionId = link.href.replace("#", "");
-                        const isActive = activeSection === sectionId;
-
-                        return (
-                          <a
-                            key={link.name}
-                            href={link.href}
-                            className={`relative rounded-full text-base font-medium transition ${
-                              link.name === "Contact"
-                                ? `px-8 py-2.5 ${
-                                    isActive
-                                      ? "bg-white text-black ring-2 ring-white/50"
-                                      : "bg-white text-black hover:bg-white/90"
-                                  }`
-                                : `px-3 py-2 ${
-                                    isActive ? "text-white" : "text-white/95 hover:text-white"
-                                  }`
-                            }`}
-                          >
-                            {isActive && link.name !== "Contact" && (
-                              <motion.span
-                                layoutId="activeSectionNav"
-                                className="absolute inset-0 rounded-full bg-white/12"
-                                transition={{ type: "spring", stiffness: 340, damping: 30 } as any}
-                              />
-                            )}
-                            <span className="relative z-10">
-                              <DecryptText text={link.name} />
-                            </span>
-                          </a>
-                        );
-                      })}
-                    </nav>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setOpen((prev) => !prev)}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-sm font-medium text-white md:hidden"
-                      aria-label="Toggle menu"
-                    >
-                      {open ? "X" : "Menu"}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div>
-      </header>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[84px] z-[95] px-6 md:hidden"
-          >
-            <div className="rounded-2xl border border-white/10 bg-[#101114] p-4 shadow-xl">
-              <nav className="space-y-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={`block rounded-lg px-3 py-3 text-base font-medium transition ${
-                      activeSection === link.href.replace("#", "")
-                        ? "bg-white/15 text-white"
-                        : "text-white/90 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </nav>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    <header
+      className="fixed left-1/2 z-[100] -translate-x-1/2"
+      style={{ top: topOffset }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.9 } as any}
+        className="flex items-center gap-[10px] rounded-[24px] border border-white/10 bg-[#171717] px-3 py-2 shadow-[0_14px_45px_rgba(0,0,0,0.45)] md:gap-[11px] md:px-[20px] md:py-[10px]"
+      >
+        {dockLinks.map((item) => (
+          <DockButton
+            key={item.label}
+            item={item}
+            isActive={activeSection === item.sectionId}
+          />
+        ))}
+      </motion.div>
+    </header>
   );
 }
